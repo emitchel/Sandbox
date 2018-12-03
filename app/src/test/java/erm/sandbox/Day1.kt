@@ -1,6 +1,8 @@
 package erm.sandbox
 
+import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.junit.Test
@@ -11,12 +13,14 @@ class Day1 {
   @Test
   private fun test1() = runBlocking {
     print("Starting Contains")
-    val viaContains = withContext(Dispatchers.IO) {
+    val viaContains = async {
       findFirstRecurringValueViaContains(frequencyInputInt, System.currentTimeMillis())
     }
     print("Starting map")
-    val viaMap =
-      withContext(Dispatchers.IO) { findFirstRecurringValueViaMap(frequencyInputInt, System.currentTimeMillis()) }
+    val viaMap = async { findFirstRecurringValueViaMap(frequencyInputInt, System.currentTimeMillis()) }
+
+    assertEquals(3, viaContains)
+
   }
 
   private suspend fun findFirstRecurringValueViaContains(
