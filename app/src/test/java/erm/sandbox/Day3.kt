@@ -6,51 +6,29 @@ import org.junit.Test
 class Day3 {
     val OVERLAPPED_SPOT = -1
 
-    val fabric = mutableListOf<Point>()
-    val fabricMap = HashMap<Point, MutableList<Claim>>()
+    val fabricMap = HashMap<Point, Claim>()
+    val overlappedPoints = HashSet<Point>()
     @Test
     fun test3() {
 
-        //112418 original answer for big set
-
-       // setFabricAndDetermineOverlaps(claims)
-       setFabricMapAndDetermineOverlaps(claims)
-        //assertEquals(4, fabric.count { it.overlapped })
-
-
-        //560 original answer for id of big set
-        assertEquals(112418, fabricMap.keys.count { it.overlapped })
-        assertEquals("560", claims.filter { !it.overlaps }.joinToString { it.getId() })
+        setFabricMapAndDetermineOverlaps(claims)
+        assertEquals(112418, getSquareInchesOfOverlappedPoints())
+        assertEquals("560", getIdOfClaimThatDoesntOverlap())
     }
 
-    val testClaims = listOf(
-        Claim("#1", "1,3:", "4x4"),
-        Claim("#2", "3,1:", "4x4"),
-        Claim("#3", "5,5:", "2x2")
-    )
+    private fun getIdOfClaimThatDoesntOverlap() = claims.filter { !it.overlaps }.joinToString { it.getId() }
 
-    private fun setFabricAndDetermineOverlaps(claims: List<Claim>) {
-        claims.forEach { claim ->
-            claim.mapOfTakenSpaces.forEach { claimPoint ->
-                if (fabric.contains(claimPoint)) {
-                    fabric[fabric.indexOf(claimPoint)].overlapped = true
-                    claims.filter { it.mapOfTakenSpaces.contains(claimPoint) }.forEach { it.overlaps = true }
-                } else {
-                    fabric.add(claimPoint)
-                }
-            }
-        }
-    }
+    private fun getSquareInchesOfOverlappedPoints() = overlappedPoints.count()
 
     private fun setFabricMapAndDetermineOverlaps(claims: List<Claim>) {
         claims.forEach { claim ->
             claim.mapOfTakenSpaces.forEach { claimPoint ->
                 if (fabricMap.containsKey(claimPoint)) {
-                    fabricMap[claimPoint]?.add(claim)
-                    fabricMap.keys.find { it == claimPoint }?.overlapped = true
-                    fabricMap[claimPoint]?.forEach { it.overlaps = true }
+                    claim.overlaps = true
+                    overlappedPoints.add(claimPoint)
+                    fabricMap[claimPoint]?.overlaps = true
                 } else {
-                    fabricMap[claimPoint] = mutableListOf(claim)
+                    fabricMap[claimPoint] = claim
                 }
             }
         }
@@ -105,6 +83,12 @@ class Day3 {
             return id.replace("#", "")
         }
     }
+
+    val testClaims = listOf(
+        Claim("#1", "1,3:", "4x4"),
+        Claim("#2", "3,1:", "4x4"),
+        Claim("#3", "5,5:", "2x2")
+    )
 
     val claims = listOf(
         Claim("#1", "896,863:", "29x19"),
