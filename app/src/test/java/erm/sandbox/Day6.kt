@@ -25,6 +25,7 @@ class Day6 {
             for (x in 0 until map[0].size) {
                 val currentPoint = inputToUse.find { it == Point(x, y) } ?: Point(x, y)
 
+                //If we're looking at one of the coordinates, put the ID as that point
                 if (inputToUse.contains(currentPoint)) {
                     map[y][x] = currentPoint.id
                 } else {
@@ -35,10 +36,13 @@ class Day6 {
                     }
 
                     listOfPointsAndDistances.sortBy { it.distance }
+                    //assuming there's at least 2 always (there's several dozen in the example)
+                    //if the top two match each other in distance, we know this point is shared
                     if (listOfPointsAndDistances[0].distance == listOfPointsAndDistances[1].distance) {
                         //we have at least two matching distances
                         map[y][x] = "."
                     } else {
+                        //paste the closest id of the point
                         map[y][x] = listOfPointsAndDistances[0].point.closestId
                     }
                 }
@@ -99,7 +103,8 @@ class Day6 {
             }
         }
 
-        var listOfBoundedPointAndSize = listOfBoundedPoints.map { BoundedPointAndSize(it, 1) }
+        var listOfBoundedPointAndSize = listOfBoundedPoints.map { BoundedPointAndSize(it, 1) } //size=1 to count it's self
+        //now that we know the bounded points, determine the size by finding all of it's closestIds and adding them up
         listOfBoundedPointAndSize.forEach {
             for (y in 0 until map.size) {
                 for (x in 0 until map[0].size) {
