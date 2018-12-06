@@ -17,7 +17,19 @@ class Day4 {
         println("Sleepy guard id ${sleepyGuard?.guardNumber}")
         val mostSleepyMinute = sleepyGuard?.mostCommonMinuteSlept()
         println("Most slept minute  $mostSleepyMinute")
-        assertEquals(240, sleepyGuard!!.guardNumber * mostSleepyMinute!!)
+        assertEquals(73646, sleepyGuard!!.guardNumber * mostSleepyMinute!!)
+
+        val mostCommonSleptMinuteGuardEntry = guardEntries.maxBy { it.mostCommonMinuteSlept()!! }
+
+        var guardThatSleptConsistently = guardEntries.get(0)
+        guardEntries.forEach {
+            if (it.mostCommonMinuteEntrySlept().value > guardThatSleptConsistently.mostCommonMinuteEntrySlept().value){
+                guardThatSleptConsistently = it
+            }
+        }
+
+        println("Most commonly slept minute ${guardThatSleptConsistently.mostCommonMinuteSlept()}, id ${guardThatSleptConsistently.guardNumber}")
+        assertEquals(4455, guardThatSleptConsistently.guardNumber * guardThatSleptConsistently.mostCommonMinuteSlept()!!)
     }
 
     private fun iterateOverSecondsToDetermineGuardEntries(entries: List<Entry>): List<GuardEntry> {
@@ -128,7 +140,11 @@ class Day4 {
         }
 
         fun mostCommonMinuteSlept(): Int? {
-            return minuteEntries.maxBy { it.value }?.key
+            return minuteEntries.maxBy { it.value }?.value
+        }
+
+        fun mostCommonMinuteEntrySlept(): Map.Entry<Int, Int> {
+            return minuteEntries.maxBy { it.value }!!
         }
 
         override fun equals(other: Any?): Boolean {
